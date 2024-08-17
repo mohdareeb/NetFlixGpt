@@ -14,6 +14,10 @@ const Login=()=>{
         if(validate(email.current.value,pass.current.value)!=null) setErrormsg("Invaid Email Or Password")
         
     }
+    if(errormsg) return ;
+
+    
+
     return (
         <div>
             <Header/>
