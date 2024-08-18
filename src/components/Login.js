@@ -1,23 +1,61 @@
 import Header from "./Header";
 import { useRef, useState } from "react";
 import {validate} from "../utils/validate";
+import { createUserWithEmailAndPassword ,signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../utils/firebase";
+import { useNavigate } from "react-router-dom";
 
 const Login=()=>{
     const [signin,setSignin] = useState(true);
     const email = useRef(null);
     const pass = useRef(null);
     const [errormsg,setErrormsg] = useState(null);
+    const navigate=useNavigate();
+
     const toggleForm=()=>{
         setSignin(!signin);
     }
     const handleButtonClick=()=>{
         if(validate(email.current.value,pass.current.value)!=null) setErrormsg("Invaid Email Or Password")
         
+        if(errormsg != null) return ;
+
+        if(signin === false) {   // this one is for sign up 
+            console.log("Sign up function ")
+            createUserWithEmailAndPassword(auth, email.current.value, pass.current.value)
+            .then((userCredential) => {
+                // Signed up 
+                const user = userCredential.user;
+                console.log(user);
+                navigate("/browse");
+                // ...
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                // ..
+                setErrormsg(errorCode+" "+errorMessage)
+            });
+
+        } // https://netflixgpt-3af00.web.app/
+        else{
+            
+            signInWithEmailAndPassword(auth, email.current.value, pass.current.value)
+            .then((userCredential) => {
+                // Signed in 
+                const user = userCredential.user;
+                console.log(user);
+                // ...
+                navigate("/browse");
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode + " " + errorMessage);
+            });
+        }
     }
-    if(errormsg) return ;
-
     
-
     return (
         <div>
             <Header/>
