@@ -30,12 +30,17 @@ const Body =()=>{
             // https://firebase.google.com/docs/reference/js/auth.user
             const uid = user.uid;
             console.log(user);
-            dispatch(addUser({id:user.uid,email:user.reloadUserInfo.email,name:user.displayName}))
+            dispatch(addUser({
+                id:user.uid,
+                email:user.reloadUserInfo.email,
+                name:user.displayName,
+                photoUrl : user.photoURL
+            }))
             // ...
         } else {
             // User is signed out
             // ...
-            dispatch(removeUser);
+            dispatch(removeUser());
             console.log("userSIgnedout")
         }
         });

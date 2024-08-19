@@ -1,22 +1,29 @@
 import Header from "./Header";
 import { useRef, useState } from "react";
 import {validate} from "../utils/validate";
-import { createUserWithEmailAndPassword ,signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword ,signInWithEmailAndPassword ,updateProfile } from "firebase/auth";
 import { auth } from "../utils/firebase";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { addUser } from "../utils/userSlice";
+
 
 const Login=()=>{
+    const dispatch=useDispatch();
     const [signin,setSignin] = useState(true);
     const email = useRef(null);
     const pass = useRef(null);
+    const name = useRef(null);
+
     const [errormsg,setErrormsg] = useState(null);
     const navigate=useNavigate();
+
 
     const toggleForm=()=>{
         setSignin(!signin);
     }
     const handleButtonClick=()=>{
-        if(validate(email.current.value,pass.current.value)!=null) setErrormsg("Invaid Email Or Password")
+        if(validate(email.current.value,pass.current.value)!=null) setErrormsg("Invaid Email Or Password");
         
         if(errormsg != null) return ;
 
@@ -27,7 +34,24 @@ const Login=()=>{
                 // Signed up 
                 const user = userCredential.user;
                 console.log(user);
-                navigate("/browse");
+                updateProfile(auth.user, {
+                displayName: name.current.value
+                , photoURL: "https://avatars.githubusercontent.com/u/66284095?s=400&u=70d9135d36ad7fb61b90196ec68a8bf74f86c22a&v=4"
+                }).then(() => {
+                    const user = auth.currentUser;
+                    dispatch(addUser({
+                        id:user.uid,
+                        email:user.reloadUserInfo.email,
+                        name:user.displayName,
+                        photoUrl : user.photoURL
+                    })) 
+                    navigate("/browse");
+                }).catch((error) => {
+                // An error occurred
+                // ...
+                    
+                });
+                
                 // ...
             })
             .catch((error) => {
@@ -69,7 +93,7 @@ const Login=()=>{
                      
                     }
                     <form onSubmit={(e)=>e.preventDefault()} className="p-2  w-[340px] h-[250px]">
-                        {!signin &&  <><input className="m-2 p-1 rounded-lg w-[300px] shadow-lg" type="text" placeholder="Username"/><br/></>}
+                        {!signin &&  <><input className="m-2 p-1 rounded-lg w-[300px] shadow-lg" type="text" ref={name} placeholder="Username"/><br/></>}
                         <input className="m-2 p-1 rounded-lg w-[300px] shadow-lg" type="text" ref={email} placeholder="Email or mobile number"/><br/>
                         <input className="m-2 p-1 rounded-lg w-[300px] shadow-lg" type="password" ref = {pass} placeholder="Password"/>
                         {errormsg !=null ? <p className="text-red-600 px-2 ">Invalid Email or Password</p>: null}
