@@ -99,7 +99,7 @@ const Login=()=>{
                         {errormsg !=null ? <p className="text-red-600 px-2 ">Invalid Email or Password</p>: null}
                         {signin ? <button className=" m-2 p-1 bg-red-700 w-[300px] " onClick={()=>handleButtonClick()}>Sign In</button> : <button className=" m-2 p-1 bg-red-700 w-[300px]" onClick={()=>handleButtonClick()}>Sign Up</button>}
                         { signin ? <p className="text-white py-2 px-4" onClick={()=>toggleForm()}>If you are new ? Sign Up</p>:
-                                    <p className="text-white py-2 px-4" onClick={()=>toggleForm()}>Having a existing account ? Sign In</p>
+                                    <p className="text-white py-2 px-4" onClick={()=>toggleForm()}>Having an existing account ? Sign In</p>
                         }
                     </form>
                 </div>
